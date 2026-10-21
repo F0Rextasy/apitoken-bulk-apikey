@@ -34,7 +34,7 @@
 
 ## ✨ 为什么会有这个项目
 
-Genvís AI（`apitoken.fun`）是 New API 的一个分支，它为**每个新账户赠送 1,000,000 配额单位 —— 在 `quota_per_unit: 500000` 下相当于 $2**，并且**没有验证码**（`turnstile_check:false`，注册页面没有 Turnstile 脚本），也**没有需要照看的每日签到仪式**。注册只需一个电子邮箱地址加一个 6 位十六进制验证码，而且额度是真实的：在实时面板上实测，注册后立即调用 `GET /api/user/self` 返回 `quota: 1000000, used_quota: 0`，在一次 `deepseek-v4-flash` 调用后返回 `quota: 999996, used_quota: 4, request_count: 1` —— 每次 chat-200 都会让这个数字变化。本项目的实测运行铸造了 **14 个账户 → 14 个密钥，且全部只在实时 chat 200 之后才被保留**（10 个通过 WARP 出口上的批量工具，4 个通过本 CLI 自带的 `--count` 路径），随附的 CLI 可随时用 `--verify-only` 重新测试它们（2026-10-21 时 **14/14 全部存活**）。唯一真正的关卡是邮箱：面板强制执行**邮箱域名白名单**（接受 gmail；mailtrap.io 和 vomoto.com 被服务器端拒绝），而它接受的 gmail 邮箱来自一个**被循环使用的共享收件箱**，其中还夹杂着其他人的邮件 —— 因此该工具只从比发送前快照更新、*并且*指明此面板（`mail.genvis.xyz`（发件人），主题 `Genvís AI邮箱验证邮件`）的邮件中提取验证码。一个在实验室中注册过的外来验证码返回了 `Verification code is incorrect or has expired`；这个陷阱在此已被封堵。
+Genvís AI（`apitoken.fun`）是 New API 的一个分支，它为**每个新账户赠送 1,000,000 配额单位 —— 在 `quota_per_unit: 500000` 下相当于 $2**，并且**没有验证码**（`turnstile_check:false`，注册页面没有 Turnstile 脚本），也**没有需要照看的每日签到仪式**。注册只需一个电子邮箱地址加一个 6 位十六进制验证码，而且额度是真实的：在实时面板上实测，注册后立即调用 `GET /api/user/self` 返回 `quota: 1000000, used_quota: 0`，在一次 `deepseek-v4-flash` 调用后返回 `quota: 999996, used_quota: 4, request_count: 1` —— 每次 chat-200 都会让这个数字变化。本项目的实测运行铸造了 **14 个账户 → 14 个密钥，且全部只在实时 chat 200 之后才被保留**（10 个通过 代理出口上的批量工具，4 个通过本 CLI 自带的 `--count` 路径），随附的 CLI 可随时用 `--verify-only` 重新测试它们（2026-10-21 时 **14/14 全部存活**）。唯一真正的关卡是邮箱：面板强制执行**邮箱域名白名单**（接受 gmail；mailtrap.io 和 vomoto.com 被服务器端拒绝），而它接受的 gmail 邮箱来自一个**被循环使用的共享收件箱**，其中还夹杂着其他人的邮件 —— 因此该工具只从比发送前快照更新、*并且*指明此面板（`mail.genvis.xyz`（发件人），主题 `Genvís AI邮箱验证邮件`）的邮件中提取验证码。一个在实验室中注册过的外来验证码返回了 `Verification code is incorrect or has expired`；这个陷阱在此已被封堵。
 
 ## 🎁 免费额度 —— 你能得到多少
 
