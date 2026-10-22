@@ -83,6 +83,7 @@ print(c.chat.completions.create(model="deepseek-v4-flash",
 ```
 
 ```bash
+
 # the shipped CLI's own gate — a key is only ever written after a real 200
 node src/cli.js --verify-only --model deepseek-v4-flash
 ```
