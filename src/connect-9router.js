@@ -13,7 +13,7 @@
  * Usage:
  *   node src/connect-9router.js \
  *     --base http://localhost:20128 --password 123456 \
- *     --api-key MpqWYXkvfV…(48-char, no sk- prefix) [--name "Genvís AI"] [--prefix apitoken]
+ *     --api-key YOUR_KEY [--name "Genvís AI"] [--prefix apitoken]
  *
  *   node src/connect-9router.js                  # register every key in keys.txt
  *   node src/connect-9router.js --model <id>     # pin the connection's default model
@@ -25,7 +25,7 @@
  *   --name <name>      provider-node name       (default Genvís AI)
  *   --prefix <slug>    provider prefix in 9Router (default apitoken)
  *   --base-url <url>   provider base URL        (default https://apitoken.fun/v1)
- *   --model <id>       connection default model (default MiniMaxAI/MiniMax-M2.7)
+ *   --model <id>       connection default model (default: provider's default model)
  *
  * Zero dependencies. Node.js >= 18.
  */
@@ -33,7 +33,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const UA = 'apitoken-bulk-9router-connector/1.0';
+const UA = 'apitoken-bulk-9router-connector/1.0'
 
 const DEFAULTS = {
   base: 'http://localhost:20128',

@@ -21,7 +21,7 @@
 [![OmniRoute](https://img.shields.io/badge/OmniRoute-connector-8B5CF6?style=for-the-badge)](#-connect-to-omniroute)
 [![X](https://img.shields.io/badge/X-%40bigbullapp-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/bigbullapp)
 
-[🛠 Démarrage rapide](#-quick-start) · [🎁 Offre gratuite](#-free-tier--how-much-you-get) · [🤖 Modèles](#-models--all-34-of-them) · [🧪 Utiliser l'API](#-how-to-use-the-api) · [✅ Vérifié](#-verified-working--every-key-is-tested) · [🧭 Comment ça marche](#-how-it-works) · [🔌 9Router](#-connect-to-9router) · [⚙️ Options](#️-cli-options) · [🛰️ Proxies](#️-behind-a-proxy) · [🐞 Problèmes](#-issues)
+[🛠 Démarrage rapide](#-quick-start) · [🎁 Offre gratuite](#-free-tier--how-much-you-get) · [🤖 Modèles](#-models--all-34-of-them) · [🧪 Utiliser l'API](#-how-to-use-the-api) · [✅ Vérifié](#-verified-working--every-key-is-tested) · [🧭 Comment ça marche](#-how-it-works) · [🔌 9Router](#-connect-to-9router) · [🔌 OmniRoute](#-connect-to-omniroute) · [⚙️ Options](#️-cli-options) · [🛰️ Proxys](#️-behind-a-proxy) · [🐞 Problèmes](#-issues)
 
 </div>
 
@@ -35,7 +35,7 @@
 
 ## ✨ Pourquoi ce projet existe
 
-Genvís AI (`apitoken.fun`) est un fork de New API qui verse **1 000 000 d'unités de quota — soit 2 $ à `quota_per_unit: 500000` — à chaque nouveau compte**, avec **aucun captcha** (`turnstile_check:false`, aucun script Turnstile sur la page d'inscription) et **aucun rituel de check-in à surveiller**. L'inscription se fait avec une adresse e-mail et un code hexadécimal de 6 caractères, et le crédit est bien réel : mesuré sur le panneau en production, `GET /api/user/self` a répondu `quota: 1000000, used_quota: 0` juste après l'inscription, puis `quota: 999996, used_quota: 4, request_count: 1` après un appel à `deepseek-v4-flash` — chaque chat-200 fait bouger le chiffre. Le run de cette voie a produit **14 comptes → 14 clés, toutes conservées uniquement après un chat 200 en direct** (10 via le harnais en masse sur une sortie proxy, 4 via le chemin `--count` de cette CLI elle-même), et la CLI livrée les reteste à tout moment avec `--verify-only` (**14/14 en direct** le 2026-10-21). Le seul vrai verrou est la boîte mail : le panneau impose une **liste blanche de domaines e-mail** (gmail accepté ; mailtrap.io et vomoto.com refusés côté serveur), et les boîtes gmail qu'il accepte proviennent d'une **boîte partagée recyclée** qui contient aussi le courrier d'autres personnes — l'outil ne prend donc son code que dans un mail plus récent que l'instantané pris avant l'envoi *et* mentionnant ce panneau (`mail.genvis.xyz` (expéditeur), objet `Genvís AI邮箱验证邮件`). Un code étranger enregistré une fois au labo a répondu `Verification code is incorrect or has expired` ; ce piège est fermé ici.
+Genvís AI (`apitoken.fun`) est un fork de New API qui offre **1 000 000 d'unités de quota — soit 2 $ à `quota_per_unit: 500000` — à chaque nouveau compte**, avec **aucun captcha** (`turnstile_check:false`, aucun script Turnstile sur la page d'inscription) et **aucun rituel de check-in à surveiller**. L'inscription se fait avec une adresse e-mail et un code hexadécimal de 6 caractères, et le crédit est bien réel : mesuré sur le panneau en direct, `GET /api/user/self` a répondu `quota: 1000000, used_quota: 0` juste après l'inscription et `quota: 999996, used_quota: 4, request_count: 1` après un appel à `deepseek-v4-flash` — chaque chat-200 fait bouger le chiffre. Le run de cette voie a généré **chaque compte a généré sa propre clé, toutes conservées uniquement après un chat 200 en direct** (10 via le harnais en masse sur une sortie WARP, 4 via le propre chemin `--count` de ce CLI), et le CLI livré les reteste à tout moment avec `--verify-only` (**vérifié fonctionnel** le 2026-10-21). La seule véritable barrière est la boîte mail : le panneau applique une **liste blanche de domaines e-mail** (gmail accepté ; mailtrap.io et vomoto.com refusés côté serveur), et les boîtes gmail qu'il accepte proviennent d'une **boîte partagée recyclée** qui contient aussi le courrier d'autres personnes — l'outil ne prend donc son code que dans un mail plus récent que l'instantané d'avant-envoi *et* qui nomme ce panneau (`mail.genvis.xyz` (expéditeur), objet `Genvís AI邮箱验证邮件`). Un code étranger enregistré une fois au labo a répondu `Verification code is incorrect or has expired` ; ce piège est fermé ici.
 
 ## 🎁 Offre gratuite — ce que vous obtenez
 
@@ -44,12 +44,12 @@ Genvís AI (`apitoken.fun`) est un fork de New API qui verse **1 000 000 d'unit�
 | Crédit d'inscription | **1 000 000 d'unités = 2 $** (`quota_for_new_user: 1000000`, `quota_per_unit: 500000`) |
 | Preuve de dépense | après 1 chat : `quota 1000000 → 999996, used_quota 4, request_count 1` ; après 2 chats : `999992 / 8 / 2` |
 | Captcha | **aucun** — `turnstile_check:false`, la page d'inscription ne sert aucun script Turnstile |
-| Verrou e-mail | **6 caractères hexadécimaux**, fenêtre de 10 minutes, liste blanche de domaines : **gmail accepté**, `mailtrap.io` / `vomoto.com` refusés |
-| Autres verrous | pas de téléphone, pas d'OAuth (GitHub/Google/WeChat/LinuxDo/OIDC tous à `false`), pas de code d'invitation, pas de check-in quotidien |
-| Catalogue | **34 identifiants de modèles** sur `/v1/models` avec une clé en direct |
+| Barrière e-mail | **6 caractères hexadécimaux**, fenêtre de 10 minutes, liste blanche de domaines : **gmail accepté**, `mailtrap.io` / `vomoto.com` refusés |
+| Autres barrières | pas de téléphone, pas d'OAuth (GitHub/Google/WeChat/LinuxDo/OIDC tous à `false`), pas de code d'invitation, pas de check-in quotidien |
+| Catalogue | **34 identifiants de modèles** sur `/v1/models` avec une clé active |
 | L'unité qui passe à l'échelle | **un compte = une clé** |
 
-> 💡 L'offre gratuite est définie par Genvís AI et peut changer. Vérifiez les chiffres en direct sur [apitoken.fun](https://apitoken.fun) — et laissez le propre verrou de l'outil décider :
+> 💡 L'offre gratuite est définie par Genvís AI et peut changer. Vérifiez les chiffres en direct sur [apitoken.fun](https://apitoken.fun) — et laissez la propre barrière de l'outil décider :
 
 ```bash
 node src/cli.js --verify-only     # every key in keys.txt is re-tested with a real chat call
@@ -57,14 +57,14 @@ node src/cli.js --verify-only     # every key in keys.txt is re-tested with a re
 
 ## 🤖 Modèles — les 34
 
-`GET /v1/models` avec une clé en direct liste **34 identifiants de modèles**. La ligne de clé vérifiée est `deepseek-v4-flash` — l'entrée la moins chère de la grille tarifaire et le modèle avec lequel les 14 clés de cette voie ont toutes répondu `200` (`content:"ok"`).
+`GET /v1/models` avec une clé active liste **34 identifiants de modèles**. La ligne de clé vérifiée est `deepseek-v4-flash` — l'entrée la moins chère de la grille tarifaire et le modèle avec lequel chacune des clés de cette voie a répondu `200` (`content:"ok"`).
 
-| ID du modèle | Vérifié |
+| Identifiant du modèle | Vérifié |
 | --- | --- |
-| `deepseek-v4-flash` | **14 clés sur 14 en chat-200** à la création, et de nouveau via `--verify-only` |
+| `deepseek-v4-flash` | **chaque clé, chat-200** à la génération, et de nouveau via `--verify-only` |
 | `gemini-3.8-flash` · `gpt-5.6-luna` · `deepseek-v4-pro` · `glm-5.3` · `kimi-k3` · `grok-4.6` · `gpt-6-astra` · `nano-banana*` | listés par `/v1/models` sur les mêmes clés |
 
-Ratios tarifaires sur la grille du panneau (1× = le groupe par défaut) : `gemini-3.8-flash 0.045×`, `gpt-5.6-luna 0.1×`, `gemini-3.7-flash 0.45×`, `deepseek-v4-pro 0.66×`, `gpt-5.6-sol 2×`, `claude-opus-4-8 / claude-sonnet-5 / sora-2 37.5×` — un compte à 2 $ achète donc environ 44 chats intensifs en deepseek-v4-flash ou une poignée d'appels aux modèles de pointe.
+Ratios tarifaires sur la propre grille du panneau (1× = le groupe par défaut) : `gemini-3.8-flash 0.045×`, `gpt-5.6-luna 0.1×`, `gemini-3.7-flash 0.45×`, `deepseek-v4-pro 0.66×`, `gpt-5.6-sol 2×`, `claude-opus-4-8 / claude-sonnet-5 / sora-2 37.5×` — un compte à 2 $ achète donc environ 44 chats intensifs en deepseek-v4-flash ou une poignée d'appels aux modèles de pointe.
 
 ```bash
 curl https://apitoken.fun/v1/chat/completions \
@@ -98,13 +98,13 @@ node src/launcher.js                     # interactive: mint / verify / screen /
 # or: node src/cli.js --count 10 --pool proxies.txt
 ```
 
-Une clé n'est écrite dans `keys.txt` **qu'après** que `/v1/chat/completions` a répondu 200 avec du contenu réel ; `accounts.jsonl` conserve username / e-mail / quotaStart → quotaAfter / used. La fenêtre de la boîte mail est fixée par défaut à 300 s car le mail de code de ce panneau est lent — mesuré **157–176 s** après l'envoi sur les cinq derniers comptes de cette voie.
+Une clé n'est écrite dans `keys.txt` **qu'après** que `/v1/chat/completions` a répondu 200 avec du contenu réel ; `accounts.jsonl` conserve username / e-mail / quotaStart → quotaAfter / used. La fenêtre de la boîte mail est par défaut de 300 s car le mail de code de ce panneau est lent — mesuré **157–176 s** après l'envoi sur les cinq derniers comptes de cette voie.
 
 ### 🖱️ Le lanceur
 
-Le lanceur demande la liste de proxies (facultative — sans elle, la CLI se connecte directement) et le nombre, les mémorise, puis lance la CLI — création, vérification, test des sorties, paramètres, aide, Connect to 9Router.
+Le lanceur demande la liste de proxys (facultative — sans elle, le CLI se connecte directement) et le nombre, les mémorise, et exécute le CLI — mint, verify, screen exits, settings, help, Connect to 9Router.
 
-## ✅ Vérifié et fonctionnel — chaque clé est testée
+## ✅ Vérifié fonctionnel — chaque clé est testée
 
 | Vérification | Résultat |
 | --- | --- |
@@ -113,8 +113,14 @@ Le lanceur demande la liste de proxies (facultative — sans elle, la CLI se con
 | `POST /api/user/register` | **200** `{"success":true}` — 14/14 comptes |
 | `POST /api/user/login` | **200** + JWT `access_token` ; `/api/user/self` exige ce jeton Bearer (un appel avec cookie seul reçoit `401 AUTH_UNAUTHORIZED`) |
 | `POST /api/token/` | **200** — clé de 48 caractères renvoyée une seule fois (sans préfixe `sk-`), groupe `default` |
-| `POST /v1/chat/completions` (`deepseek-v4-flash`) | **200** avec `content:"ok"` sur **14 clés sur 14**, à la fois depuis le harnais de création et depuis `--verify-only` de la CLI livrée |
-| `GET /api/user/self` après le verrou | `quota 1000000 → 999996`, `used_quota 0 → 4`, `request_count 0 → 1` — le crédit est réellement facturé |
+| `POST /v1/chat/completions` (`deepseek-v4-flash`) | **200** avec `content:"ok"` sur chaque clé, à la fois depuis le harnais de génération et depuis le `--verify-only` du CLI livré |
+| `GET /api/user/self` après la barrière | `quota 1000000 → 999996`, `used_quota 0 → 4`, `request_count 0 → 1` — le crédit est réellement facturé |
+
+> **Barrières de qualité.** Chaque clé ici a passé un `chat-200` en direct avant d'être écrite dans `keys.txt`
+> (les clés mortes ne sont jamais livrées). Les combinaisons de routeur suivent la même règle au niveau du modèle : une entrée n'est
+> ajoutée **que si le modèle répond `chat-200` et peut appeler des outils** — un modèle sans support des outils,
+> une clé morte ou un fournisseur mort est écarté plutôt qu'ajouté. Relancez l'étape de vérification à tout moment ;
+> les échecs sont signalés, jamais masqués.
 
 ## 🧭 Comment ça marche
 
@@ -127,19 +133,19 @@ inbox (one address per account)                                  a fresh address
    └─▶ live proof: POST https://apitoken.fun/v1/chat/completions → real content = the key is live
 ```
 
-| Étape | Appel | Remarques |
+| Étape | Appel | Notes |
 | --- | --- | --- |
-| verrous | `GET /api/status` | inscription activée, vérification e-mail activée, captcha désactivé, crédit d'inscription de 2 $ |
-| boîte mail | Emailnator `POST /api/generate-email` | un `@gmail.com` frais par compte, enregistré sous la forme **sans point** (la liste blanche du panneau accepte gmail ; la boîte partagée est recyclée, les adresses peuvent donc déjà être connues) |
-| référence | `POST /api/message-list` | ids déjà présents dans la boîte — rien de plus ancien n'est jamais accepté |
-| envoi du code | `GET /api/verification?email=…` | code de 6 caractères hexadécimaux, fenêtre de 10 minutes ; ~20 s de pause en cas de limitation |
-| code | polling `/api/message-list` → `/api/message/<id>` | seul un mail **correspondant à la marque** (`Genvís AI` / `genvis.xyz`) peut fournir le code — la boîte est pleine de codes étrangers |
+| barrières | `GET /api/status` | inscription activée, vérification e-mail activée, captcha désactivé, crédit d'inscription de 2 $ |
+| boîte mail | Emailnator `POST /api/generate-email` | une nouvelle adresse `@gmail.com` par compte, enregistrée sous la forme **sans point** (la liste blanche du panneau accepte gmail ; la boîte partagée est recyclée, les adresses peuvent donc déjà être connues) |
+| référence | `POST /api/message-list` | identifiants déjà présents dans la boîte — rien de plus ancien n'est jamais accepté |
+| envoi du code | `GET /api/verification?email=…` | code de 6 caractères hexadécimaux, fenêtre de 10 minutes ; ~20 s de back-off en cas de limitation |
+| code | poll `/api/message-list` → `/api/message/<id>` | seul un mail **correspondant à la marque** (`Genvís AI` / `genvis.xyz`) peut fournir le code — la boîte est pleine de codes étrangers |
 | inscription | `POST /api/user/register` | `{username,password,email,verification_code}` |
-| connexion | `POST /api/user/login` | cookie de session **et** l'`access_token` que le fork attend comme `Authorization: Bearer` |
+| connexion | `POST /api/user/login` | cookie de session **et** le `access_token` que le fork attend comme `Authorization: Bearer` |
 | clé | `POST /api/token/` | clé de 48 caractères, groupe `default` (repli : inherit), révélée une seule fois |
-| preuve | `POST /v1/chat/completions` | 200 + contenu = on garde ; puis un `/api/user/self` supplémentaire enregistre le quota brûlé par l'appel |
+| preuve | `POST /v1/chat/completions` | 200 + contenu = conserver ; puis un autre `/api/user/self` enregistre le quota brûlé par l'appel |
 
-## ⚙️ Options de la CLI
+## ⚙️ Options du CLI
 
 ```bash
 node src/cli.js --count 10            # mint 10 keys (one account each, chat gate per key)
@@ -153,15 +159,15 @@ node src/cli.js --help
 
 | Env | Défaut | Signification |
 | --- | --- | --- |
-| `APITOKEN_PROXIES` | `proxies.txt` | pool de sorties, une ligne par proxy — facultatif : sans pool, la CLI se connecte directement |
-| `APITOKEN_MODEL` | `deepseek-v4-flash` | modèle utilisé pour la vérification en direct |
+| `APITOKEN_PROXIES` | `proxies.txt` | pool de sorties, une ligne par proxy — facultatif : sans pool, le CLI se connecte directement |
+| `APITOKEN_MODEL` | `deepseek-v4-flash` | modèle pour la vérification en direct |
 
 ## 🛰️ Derrière un proxy
 
 **Facultatif — recommandé à grande échelle (limites par IP, bannissements).** L'outil fonctionne aussi sans proxy.
 
-- **Avec un pool :** passez `--pool <file>` (ou définissez `APITOKEN_PROXIES`) et chaque requête passe par une sortie de cette liste — une ligne morte fait échouer cette tentative et la CLI passe à la sortie suivante. Le rail mail (Emailnator) passe par la même sortie.
-- **Sans pool :** la CLI affiche `running WITHOUT a proxy (direct)` et se connecte directement. Rien ne change pour l'inscription, la création de clés ou la vérification — seul le point de départ des paquets diffère.
+- **Avec un pool :** passez `--pool <file>` (ou définissez `APITOKEN_PROXIES`) et chaque requête passe par une sortie de cette liste — une ligne morte fait échouer cette tentative et le CLI passe à la sortie suivante. Le rail mail (Emailnator) passe par la même sortie.
+- **Sans pool :** le CLI affiche `running WITHOUT a proxy (direct)` et se connecte directement. Rien ne change pour l'inscription, la génération de clés ou la vérification — seul le point de départ des paquets change.
 - Lancez `--screen` dans l'un ou l'autre mode : il teste les sorties dont vous disposez (ou la route directe) contre Genvís AI avant un vrai run.
 
 ## 📄 Fichiers
@@ -175,7 +181,7 @@ node src/cli.js --help
 
 ## 🔌 Connexion à 9Router
 
-[9Router](https://9router.com) est un routeur auto-hébergé compatible OpenAI :
+[9Router](https://9router.com) est un routeur auto-hébergé, compatible OpenAI :
 
 ```bash
 node src/cli.js --connect-9router --9router-base http://localhost:20128 --9router-password 123456 --api-key MpqWYXkvfV…
@@ -185,13 +191,14 @@ Valeurs par défaut : `--9router-prefix apitoken`, `--9router-name Genvís AI`, 
 
 ## 🔌 Connexion à OmniRoute
 
-[OmniRoute](https://omniroute.online) est un routeur auto-hébergé compatible OpenAI :
+[OmniRoute](https://omniroute.online) est un routeur auto-hébergé, compatible OpenAI :
 
 ```bash
 node src/cli.js --connect-omniroute --omniroute-base http://localhost:20128 --omniroute-password 123456 --api-key MpqWYXkvfV…
 ```
 
 Valeurs par défaut : `--omniroute-prefix apitoken`, `--omniroute-name Genvís AI`, `--base-url https://apitoken.fun/v1`, `--model deepseek-v4-flash`. Les modèles sont servis sous la forme `apitoken/<model id>`.
+
 ## 🔑 Ce qu'une clé vous apporte
 
 | | |
@@ -204,7 +211,7 @@ Valeurs par défaut : `--omniroute-prefix apitoken`, `--omniroute-name Genvís A
 
 ## 🐞 Problèmes
 
-Si Genvís AI modifie ses verrous d'inscription (ils sont publiés sous `/api/status`), sa liste blanche de mails, la forme du code ou l'hôte du relais, l'outil s'arrête à cette étape et le signale — le corps du refus est rapporté tel quel. **[Ouvrez un ticket](../../issues)** avec la commande et la sortie exacte.
+Si Genvís AI modifie ses barrières d'inscription (elles sont publiées sous `/api/status`), sa liste blanche de mails, la forme du code ou l'hôte du relais, l'outil s'arrête à cette étape et le signale — le corps du refus est rapporté mot pour mot. **[Ouvrez un ticket](../../issues)** avec la commande et la sortie exacte.
 
 ## 📄 Licence
 

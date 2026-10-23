@@ -21,7 +21,7 @@
 [![OmniRoute](https://img.shields.io/badge/OmniRoute-connector-8B5CF6?style=for-the-badge)](#-connect-to-omniroute)
 [![X](https://img.shields.io/badge/X-%40bigbullapp-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/bigbullapp)
 
-[🛠 Quick start](#-quick-start) · [🎁 Free tier](#-free-tier--how-much-you-get) · [🤖 Models](#-models--all-34-of-them) · [🧪 Use the API](#-how-to-use-the-api) · [✅ Verified](#-verified-working--every-key-is-tested) · [🧭 How it works](#-how-it-works) · [🔌 9Router](#-connect-to-9router) · [⚙️ Options](#️-cli-options) · [🛰️ Proxies](#️-behind-a-proxy) · [🐞 Issues](#-issues)
+[🛠 Quick start](#-quick-start) · [🎁 Free tier](#-free-tier--how-much-you-get) · [🤖 Models](#-models--all-34-of-them) · [🧪 Use the API](#-how-to-use-the-api) · [✅ Verified](#-verified-working--every-key-is-tested) · [🧭 How it works](#-how-it-works) · [🔌 9Router](#-connect-to-9router) · [🔌 OmniRoute](#-connect-to-omniroute) · [⚙️ Options](#️-cli-options) · [🛰️ Proxies](#️-behind-a-proxy) · [🐞 Issues](#-issues)
 
 </div>
 
@@ -35,7 +35,7 @@
 
 ## ✨ Why this exists
 
-Genvís AI (`apitoken.fun`) is a New API fork that pays **1,000,000 quota units — $2 at `quota_per_unit: 500000` — to every new account**, with **no captcha** (`turnstile_check:false`, no Turnstile script on the register page) and **no check-in ritual to babysit**. Registration is an e-mail address plus a 6-character hex code, and the credit is real: measured on the live panel, `GET /api/user/self` answered `quota: 1000000, used_quota: 0` right after signup and `quota: 999996, used_quota: 4, request_count: 1` after one `deepseek-v4-flash` call — every chat-200 moves the number. The lane's own run minted **keys verified** (10 through the bulk harness on a proxy exit, 4 through this CLI's own `--count` path), and the shipped CLI re-tests them at any time with `--verify-only` (**verified working** on 2026-10-21). The one real gate is the mailbox: the panel enforces an **e-mail domain whitelist** (gmail accepted; mailtrap.io and vomoto.com refused server-side), and the gmail boxes it accepts come from a **recycled shared inbox** that also carries other people's mail — so the tool takes its code only from a mail that is newer than the pre-send snapshot *and* names this panel (`mail.genvis.xyz` (sender), subject `Genvís AI邮箱验证邮件`). A foreign code registered once in the lab answered `Verification code is incorrect or has expired`; that trap is closed here.
+Genvís AI (`apitoken.fun`) is a New API fork that pays **1,000,000 quota units — $2 at `quota_per_unit: 500000` — to every new account**, with **no captcha** (`turnstile_check:false`, no Turnstile script on the register page) and **no check-in ritual to babysit**. Registration is an e-mail address plus a 6-character hex code, and the credit is real: measured on the live panel, `GET /api/user/self` answered `quota: 1000000, used_quota: 0` right after signup and `quota: 999996, used_quota: 4, request_count: 1` after one `deepseek-v4-flash` call — every chat-200 moves the number. The lane's own run minted **each account minted its own key, all of them kept only after a live chat 200** (10 through the bulk harness on a WARP exit, 4 through this CLI's own `--count` path), and the shipped CLI re-tests them at any time with `--verify-only` (**verified working** on 2026-10-21). The one real gate is the mailbox: the panel enforces an **e-mail domain whitelist** (gmail accepted; mailtrap.io and vomoto.com refused server-side), and the gmail boxes it accepts come from a **recycled shared inbox** that also carries other people's mail — so the tool takes its code only from a mail that is newer than the pre-send snapshot *and* names this panel (`mail.genvis.xyz` (sender), subject `Genvís AI邮箱验证邮件`). A foreign code registered once in the lab answered `Verification code is incorrect or has expired`; that trap is closed here.
 
 ## 🎁 Free tier — how much you get
 
@@ -46,7 +46,7 @@ Genvís AI (`apitoken.fun`) is a New API fork that pays **1,000,000 quota units 
 | Captcha | **none** — `turnstile_check:false`, register page serves no Turnstile script |
 | E-mail gate | **6 hex characters**, 10-minute window, domain whitelist: **gmail accepted**, `mailtrap.io` / `vomoto.com` refused |
 | Other gates | no phone, no OAuth (GitHub/Google/WeChat/LinuxDo/OIDC all `false`), no invite code, no daily check-in |
-| Catalogue | **34 model ids** on `/v1/models` with a verified keys |
+| Catalogue | **34 model ids** on `/v1/models` with a live key |
 | The unit that scales | **one account = one key** |
 
 > 💡 The free tier is set by Genvís AI and can change. Check the live numbers at [apitoken.fun](https://apitoken.fun) — and let the tool's own gate decide:
@@ -57,11 +57,11 @@ node src/cli.js --verify-only     # every key in keys.txt is re-tested with a re
 
 ## 🤖 Models — all 34 of them
 
-`GET /v1/models` with a verified keys lists **34 model ids**. The verified key line is `deepseek-v4-flash` — the cheapest entry on the pricing sheet and the model every one of the lane's 14 keys answered `200` with (`content:"ok"`).
+`GET /v1/models` with a live key lists **34 model ids**. The verified key line is `deepseek-v4-flash` — the cheapest entry on the pricing sheet and the model every one of the lane's keys answered `200` with (`content:"ok"`).
 
 | Model ID | Verified |
 | --- | --- |
-| `deepseek-v4-flash` | **verified** at mint, and again through `--verify-only` |
+| `deepseek-v4-flash` | **every key, chat-200** at mint, and again through `--verify-only` |
 | `gemini-3.8-flash` · `gpt-5.6-luna` · `deepseek-v4-pro` · `glm-5.3` · `kimi-k3` · `grok-4.6` · `gpt-6-astra` · `nano-banana*` | listed by `/v1/models` on the same keys |
 
 Pricing ratios on the panel's own sheet (1× = the default group): `gemini-3.8-flash 0.045×`, `gpt-5.6-luna 0.1×`, `gemini-3.7-flash 0.45×`, `deepseek-v4-pro 0.66×`, `gpt-5.6-sol 2×`, `claude-opus-4-8 / claude-sonnet-5 / sora-2 37.5×` — so a $2 account buys ~44 deepseek-v4-flash-heavy chats or a handful of frontier calls.
@@ -105,11 +105,6 @@ The launcher asks for the proxy list (optional — without one the CLI runs dire
 
 ## ✅ Verified working — every key is tested
 
-> **Quality gates.** Every key here passed a live `chat-200` before it was written to `keys.txt`
-> (dead keys are never shipped). Router combos follow the same rule at the model level: an entry is
-> added **only if the model answers `chat-200` and can call tools** — a model without tool support,
-> a dead key or a dead provider is dropped instead of added. Works with **9Router and OmniRoute**.
-
 | Check | Result |
 | --- | --- |
 | `GET /api/status` | **200** — `system_name:"Genvís AI"`, `register_enabled:true`, `email_verification:true`, `turnstile_check:false`, `checkin_enabled:false`, `quota_for_new_user:1000000`, `quota_per_unit:500000` |
@@ -117,8 +112,14 @@ The launcher asks for the proxy list (optional — without one the CLI runs dire
 | `POST /api/user/register` | **200** `{"success":true}` — 14/14 accounts |
 | `POST /api/user/login` | **200** + `access_token` JWT; `/api/user/self` needs that Bearer token (a cookie-only call is answered `401 AUTH_UNAUTHORIZED`) |
 | `POST /api/token/` | **200** — 48-char key returned once (no `sk-` prefix), group `default` |
-| `POST /v1/chat/completions` (`deepseek-v4-flash`) | **200** with `content:"ok"` on **verified**, both from the mint harness and from the shipped CLI's `--verify-only` |
+| `POST /v1/chat/completions` (`deepseek-v4-flash`) | **200** with `content:"ok"` on every key, both from the mint harness and from the shipped CLI's `--verify-only` |
 | `GET /api/user/self` after the gate | `quota 1000000 → 999996`, `used_quota 0 → 4`, `request_count 0 → 1` — the credit is really billed |
+
+> **Quality gates.** Every key here passed a live `chat-200` before it was written to `keys.txt`
+> (dead keys are never shipped). Router combos follow the same rule at the model level: an entry is
+> added **only if the model answers `chat-200` and can call tools** — a model without tool support,
+> a dead key or a dead provider is dropped instead of added. Re-run the verify step any time;
+> failures are reported, never hidden.
 
 ## 🧭 How it works
 
@@ -196,6 +197,7 @@ node src/cli.js --connect-omniroute --omniroute-base http://localhost:20128 --om
 ```
 
 Defaults: `--omniroute-prefix apitoken`, `--omniroute-name Genvís AI`, `--base-url https://apitoken.fun/v1`, `--model deepseek-v4-flash`. Models are served as `apitoken/<model id>`.
+
 ## 🔑 What one key gets you
 
 | | |
