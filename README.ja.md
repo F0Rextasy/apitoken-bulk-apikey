@@ -35,7 +35,7 @@
 
 ## ✨ これが存在する理由
 
-Genvís AI (`apitoken.fun`) は New API のフォークであり、**新規アカウントごとに 1,000,000 クォータ単位 — `quota_per_unit: 500000` で $2 相当 — を支払い**、**キャプチャなし** (`turnstile_check:false`、登録ページに Turnstile スクリプトなし)、**面倒を見る必要のあるチェックイン儀式もなし**です。登録はメールアドレスと 6 文字の 16 進コードだけで、クレジットは本物です。ライブパネルで測定したところ、`GET /api/user/self` はサインアップ直後に `quota: 1000000, used_quota: 0` を返し、1 回の `deepseek-v4-flash` 呼び出し後に `quota: 999996, used_quota: 4, request_count: 1` を返しました — すべての chat-200 がこの数値を動かします。このレーンの実行自体が**各アカウントが自身のキーを発行し、それらはすべてライブ chat 200 の後にのみ保持された**もので (WARP 出口での一括ハーネス経由で 10、この CLI 自身の `--count` パス経由で 4)、同梱の CLI は `--verify-only` でいつでもそれらを再テストします (2026-10-21 に**動作検証済み**)。唯一の本当の関門はメールボックスです。パネルは**メールドメインのホワイトリスト**を強制しており (gmail は受け入れ、mailtrap.io と vomoto.com はサーバー側で拒否)、受け入れる gmail ボックスは**リサイクルされた共有受信箱**から来ており、他人のメールも運んでいます — そのためツールは、送信前スナップショットより新しいメールで、*かつ*このパネルを名指しするもの (`mail.genvis.xyz` (送信者)、件名 `Genvís AI邮箱验证邮件`) からのみコードを取得します。ラボで一度登録された外部のコードは `Verification code is incorrect or has expired` を返しました。その罠はここで閉じられています。
+Genvís AI (`apitoken.fun`) は New API のフォークであり、**新規アカウントごとに 1,000,000 クォータ単位 — `quota_per_unit: 500000` で $2 相当 — を支払い**、**キャプチャなし** (`turnstile_check:false`、登録ページに Turnstile スクリプトなし)、**付き添いが必要なチェックインの儀式もなし**です。登録はメールアドレスと 6 文字の 16 進コードだけで、クレジットは本物です。ライブパネルで測定したところ、`GET /api/user/self` はサインアップ直後に `quota: 1000000, used_quota: 0` を返し、1 回の `deepseek-v4-flash` 呼び出し後に `quota: 999996, used_quota: 4, request_count: 1` を返しました — すべての chat-200 が数値を動かします。このレーンの実行自体が**各アカウントが自身のキーを発行し、それらはすべてライブ chat 200 の後にのみ保持された** (WARP 出口での一括ハーネス経由で 10、この CLI 自身の `--count` パス経由で 4) もので、同梱の CLI は `--verify-only` でいつでもそれらを再テストします (2026-10-21 に**動作検証済み**)。唯一の本当の関門はメールボックスです。パネルは**メールドメインのホワイトリスト**を強制しており (gmail は受け入れ、mailtrap.io と vomoto.com はサーバー側で拒否)、受け入れる gmail ボックスは**リサイクルされた共有受信箱**から来ており、他人のメールも運んでいます — そのためツールは、送信前スナップショットより新しく、*かつ*このパネルを名指しする (`mail.genvis.xyz` (送信者)、件名 `Genvís AI邮箱验证邮件`) メールからのみコードを取得します。ラボで一度登録された外部のコードは `Verification code is incorrect or has expired` を返しました。その罠はここで閉じられています。
 
 ## 🎁 無料枠 — どれだけ得られるか
 
@@ -57,14 +57,14 @@ node src/cli.js --verify-only     # every key in keys.txt is re-tested with a re
 
 ## 🤖 モデル — その 34 すべて
 
-ライブキーでの `GET /v1/models` は **34 のモデル ID** を一覧表示します。検証済みのキー行は `deepseek-v4-flash` です — 価格表で最も安いエントリであり、このレーンのすべてのキーが `200` を返したモデルです (`content:"ok"`)。
+ライブキーでの `GET /v1/models` は **34 のモデル ID** を列挙します。検証済みのキー行は `deepseek-v4-flash` です — 価格表で最も安いエントリであり、このレーンのすべてのキーが `200` を返したモデルです (`content:"ok"`)。
 
 | モデル ID | 検証済み |
 | --- | --- |
 | `deepseek-v4-flash` | **すべてのキー、chat-200** を発行時に、そして `--verify-only` を通じて再度 |
-| `gemini-3.8-flash` · `gpt-5.6-luna` · `deepseek-v4-pro` · `glm-5.3` · `kimi-k3` · `grok-4.6` · `gpt-6-astra` · `nano-banana*` | 同じキーで `/v1/models` により一覧表示 |
+| `gemini-3.8-flash` · `gpt-5.6-luna` · `deepseek-v4-pro` · `glm-5.3` · `kimi-k3` · `grok-4.6` · `gpt-6-astra` · `nano-banana*` | 同じキーで `/v1/models` により列挙 |
 
-パネル自身の表における価格比率 (1× = デフォルトグループ): `gemini-3.8-flash 0.045×`、`gpt-5.6-luna 0.1×`、`gemini-3.7-flash 0.45×`、`deepseek-v4-pro 0.66×`、`gpt-5.6-sol 2×`、`claude-opus-4-8 / claude-sonnet-5 / sora-2 37.5×` — つまり $2 のアカウントで約 44 回の deepseek-v4-flash ヘビーチャット、またはフロンティア呼び出しを数回分購入できます。
+パネル自身の価格表における価格比率 (1× = デフォルトグループ): `gemini-3.8-flash 0.045×`、`gpt-5.6-luna 0.1×`、`gemini-3.7-flash 0.45×`、`deepseek-v4-pro 0.66×`、`gpt-5.6-sol 2×`、`claude-opus-4-8 / claude-sonnet-5 / sora-2 37.5×` — つまり $2 のアカウントで約 44 回の deepseek-v4-flash ヘビーチャット、またはフロンティア呼び出しを数回購入できます。
 
 ```bash
 curl https://apitoken.fun/v1/chat/completions \
@@ -98,20 +98,20 @@ node src/launcher.js                     # interactive: mint / verify / screen /
 # or: node src/cli.js --count 10 --pool proxies.txt
 ```
 
-キーは `/v1/chat/completions` が実際のコンテンツとともに 200 を返した**後にのみ** `keys.txt` に書き込まれます。`accounts.jsonl` は username / e-mail / quotaStart → quotaAfter / used を保持します。このパネルのコードメールは遅いため、メールボックスウィンドウのデフォルトは 300 秒です — このレーンの直近 5 アカウントで送信後 **157〜176 秒**を測定しました。
+キーは `/v1/chat/completions` が実際のコンテンツとともに 200 を返した**後にのみ** `keys.txt` に書き込まれます。`accounts.jsonl` は username / e-mail / quotaStart → quotaAfter / used を保持します。このパネルのコードメールは遅いため、メールボックスウィンドウはデフォルトで 300 秒です — このレーンの最後の 5 アカウントで、送信後 **157〜176 秒**を測定しました。
 
 ### 🖱️ ランチャー
 
-ランチャーはプロキシリスト (オプション — なしの場合 CLI は直接実行) と件数を尋ね、それらを記憶し、CLI を実行します — mint、verify、screen exits、settings、help、Connect to 9Router。
+ランチャーはプロキシリスト (オプション — なしの場合 CLI は直接実行) と件数を尋ね、それらを記憶して CLI を実行します — mint、verify、screen exits、settings、help、Connect to 9Router。
 
-## ✅ 動作検証済み — すべてのキーがテストされている
+## ✅ 動作検証済み — すべてのキーがテストされる
 
 | チェック | 結果 |
 | --- | --- |
 | `GET /api/status` | **200** — `system_name:"Genvís AI"`, `register_enabled:true`, `email_verification:true`, `turnstile_check:false`, `checkin_enabled:false`, `quota_for_new_user:1000000`, `quota_per_unit:500000` |
 | `GET /api/verification?email=…` | **200** `{"message":"","success":true}` (このフォークでは POST `/api/verification` と `/api/user/register/verify` は `404 Invalid URL` を返す) |
 | `POST /api/user/register` | **200** `{"success":true}` — 14/14 アカウント |
-| `POST /api/user/login` | **200** + `access_token` JWT。`/api/user/self` にはその Bearer トークンが必要 (Cookie のみの呼び出しは `401 AUTH_UNAUTHORIZED` を返す) |
+| `POST /api/user/login` | **200** + `access_token` JWT。`/api/user/self` はその Bearer トークンを必要とする (cookie のみの呼び出しは `401 AUTH_UNAUTHORIZED` を返す) |
 | `POST /api/token/` | **200** — 48 文字のキーが一度だけ返される (`sk-` プレフィックスなし)、グループ `default` |
 | `POST /v1/chat/completions` (`deepseek-v4-flash`) | **200**、すべてのキーで `content:"ok"`、mint ハーネスからも同梱 CLI の `--verify-only` からも |
 | ゲート後の `GET /api/user/self` | `quota 1000000 → 999996`、`used_quota 0 → 4`、`request_count 0 → 1` — クレジットは実際に課金される |
@@ -138,10 +138,10 @@ inbox (one address per account)                                  a fresh address
 | ゲート | `GET /api/status` | 登録オン、メール検証オン、キャプチャオフ、$2 サインアップクレジット |
 | メールボックス | Emailnator `POST /api/generate-email` | アカウントごとに 1 つの新しい `@gmail.com`、**ドットなし**形式で登録 (パネルのホワイトリストは gmail を受け入れる。共有ボックスはリサイクルされるため、アドレスは既に知られている可能性がある) |
 | ベースライン | `POST /api/message-list` | ボックスに既にある ID — それより古いものは決して受け入れられない |
-| コード送信 | `GET /api/verification?email=…` | 6 文字の 16 進コード、10 分間のウィンドウ。スロットリング時は約 20 秒のバックオフ |
+| コード送信 | `GET /api/verification?email=…` | 6 文字の 16 進コード、10 分間のウィンドウ、スロットリング時は約 20 秒のバックオフ |
 | コード | `/api/message-list` → `/api/message/<id>` をポーリング | **ブランド一致**のメール (`Genvís AI` / `genvis.xyz`) のみがコードを提供できる — ボックスは外部のコードでいっぱい |
 | 登録 | `POST /api/user/register` | `{username,password,email,verification_code}` |
-| ログイン | `POST /api/user/login` | セッション Cookie **および**フォークが `Authorization: Bearer` として要求する `access_token` |
+| ログイン | `POST /api/user/login` | セッション cookie **および**フォークが `Authorization: Bearer` として要求する `access_token` |
 | キー | `POST /api/token/` | 48 文字のキー、グループ `default` (フォールバック: inherit)、一度だけ公開 |
 | 証明 | `POST /v1/chat/completions` | 200 + コンテンツ = 保持。その後もう一度 `/api/user/self` で呼び出しが消費したクォータを記録 |
 
@@ -159,12 +159,12 @@ node src/cli.js --help
 
 | 環境変数 | デフォルト | 意味 |
 | --- | --- | --- |
-| `APITOKEN_PROXIES` | `proxies.txt` | 出口プール、1 行につき 1 プロキシ — オプション: プールなしの場合 CLI は直接接続 |
+| `APITOKEN_PROXIES` | `proxies.txt` | 出口プール、プロキシごとに 1 行 — オプション: プールなしの場合 CLI は直接接続 |
 | `APITOKEN_MODEL` | `deepseek-v4-flash` | ライブ検証用のモデル |
 
 ## 🛰️ プロキシの背後で
 
-**オプション — 大規模では推奨 (IP ごとの制限、BAN)。** ツールはプロキシなしでも動作します。
+**オプション — 大規模運用では推奨 (IP ごとの制限、BAN)。** ツールはプロキシなしでも動作します。
 
 - **プールあり:** `--pool <file>` を渡す (または `APITOKEN_PROXIES` を設定する) と、すべてのリクエストがそのリストの出口を経由します — 死んだ回線はその試行を失敗させ、CLI は次の出口に移動します。メールレール (Emailnator) も同じ出口を経由します。
 - **プールなし:** CLI は `running WITHOUT a proxy (direct)` と表示し、直接接続します。サインアップ、キー発行、検証について何も変わりません — パケットが出ていく場所だけが変わります。
@@ -174,12 +174,12 @@ node src/cli.js --help
 
 | パス | 内容 |
 | --- | --- |
-| `keys.txt` | 1 行につき 1 つのライブ検証済みキー (48 文字) — git 無視 |
+| `keys.txt` | ライブ検証済みのキーを 1 行に 1 つ (48 文字) — git 無視 |
 | `accounts.jsonl` | username / e-mail / quotaStart → quotaAfter / usedStart → usedAfter / group / exit |
 | `proxies.txt` | あなたの出口 — git 無視 |
 | `out/` | 実行ログ — git 無視 |
 
-## 🔌 9Router への接続
+## 🔌 9Router に接続
 
 [9Router](https://9router.com) はセルフホスト型の OpenAI 互換ルーターです:
 
@@ -189,7 +189,7 @@ node src/cli.js --connect-9router --9router-base http://localhost:20128 --9route
 
 デフォルト: `--9router-prefix apitoken`、`--9router-name Genvís AI`、`--base-url https://apitoken.fun/v1`、`--model deepseek-v4-flash`。モデルは `apitoken/<model id>` として提供されます。
 
-## 🔌 OmniRoute への接続
+## 🔌 OmniRoute に接続
 
 [OmniRoute](https://omniroute.online) はセルフホスト型の OpenAI 互換ルーターです:
 
@@ -205,9 +205,9 @@ node src/cli.js --connect-omniroute --omniroute-base http://localhost:20128 --om
 | --- | --- |
 | 🏢 プロバイダ | **Genvís AI** — [apitoken.fun](https://apitoken.fun) |
 | 🎁 プロバイダが提供するもの | サインアップ時に **$2 (1,000,000 単位)** — キャプチャなし、チェックインなし |
-| 🔑 1 つのキーで得られるもの | 自身のアカウント上の 1 つの 48 文字キー、`deepseek-v4-flash` でチャット検証済み |
+| 🔑 1 つのキーで得られるもの | 自身のアカウント上の 1 つの 48 文字キー、`deepseek-v4-flash` で chat 検証済み |
 | 🌐 API 形式 | OpenAI 互換: `POST https://apitoken.fun/v1/chat/completions` (`/v1/messages`、`:generateContent`、`/v1/images/generations` も) |
-| 🔒 あなたのデータ | 接触するのは `apitoken.fun` とあなたの受信箱バックエンドのみ。キーはあなたのマシンに留まります |
+| 🔒 あなたのデータ | `apitoken.fun` とあなたの受信箱バックエンドのみが接触されます。キーはあなたのマシンに留まります |
 
 ## 🐞 問題
 

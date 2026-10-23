@@ -35,7 +35,7 @@
 
 ## ✨ Por qué existe esto
 
-Genvís AI (`apitoken.fun`) es un fork de New API que paga **1.000.000 de unidades de cuota — $2 con `quota_per_unit: 500000` — a cada cuenta nueva**, **sin captcha** (`turnstile_check:false`, sin script de Turnstile en la página de registro) y **sin ritual de check-in que vigilar**. El registro es una dirección de correo más un código hexadecimal de 6 caracteres, y el crédito es real: medido en el panel en vivo, `GET /api/user/self` respondió `quota: 1000000, used_quota: 0` justo después del registro y `quota: 999996, used_quota: 4, request_count: 1` tras una llamada a `deepseek-v4-flash` — cada chat-200 mueve el número. La propia ejecución del carril acuñó **cada cuenta acuñó su propia clave, todas conservadas solo tras un chat 200 en vivo** (10 a través del arnés masivo en una salida WARP, 4 a través del propio camino `--count` de esta CLI), y la CLI incluida las vuelve a probar en cualquier momento con `--verify-only` (**verificado funcionando** el 2026-10-21). La única barrera real es el buzón: el panel aplica una **lista blanca de dominios de correo** (gmail aceptado; mailtrap.io y vomoto.com rechazados del lado del servidor), y los buzones de gmail que acepta provienen de una **bandeja compartida reciclada** que también lleva correo de otras personas — por eso la herramienta toma su código solo de un correo más reciente que la instantánea previa al envío *y* que nombre este panel (`mail.genvis.xyz` (remitente), asunto `Genvís AI邮箱验证邮件`). Un código ajeno registrado una vez en el laboratorio respondió `Verification code is incorrect or has expired`; esa trampa queda cerrada aquí.
+Genvís AI (`apitoken.fun`) es un fork de New API que paga **1.000.000 de unidades de cuota — $2 con `quota_per_unit: 500000` — a cada cuenta nueva**, **sin captcha** (`turnstile_check:false`, sin script de Turnstile en la página de registro) y **sin ritual de check-in que vigilar**. El registro es una dirección de correo más un código hexadecimal de 6 caracteres, y el crédito es real: medido en el panel en vivo, `GET /api/user/self` respondió `quota: 1000000, used_quota: 0` justo después del registro y `quota: 999996, used_quota: 4, request_count: 1` tras una llamada a `deepseek-v4-flash` — cada chat-200 mueve el número. La propia ejecución del carril acuñó **cada cuenta acuñó su propia clave, todas conservadas solo tras un chat 200 en vivo** (10 a través del arnés masivo en una salida WARP, 4 a través de la propia ruta `--count` de este CLI), y el CLI incluido las vuelve a probar en cualquier momento con `--verify-only` (**verificado funcionando** el 2026-10-21). La única barrera real es el buzón: el panel aplica una **lista blanca de dominios de correo** (gmail aceptado; mailtrap.io y vomoto.com rechazados del lado del servidor), y los buzones de gmail que acepta provienen de una **bandeja compartida reciclada** que también lleva correo de otras personas — así que la herramienta toma su código solo de un correo que sea más reciente que la instantánea previa al envío *y* que nombre este panel (`mail.genvis.xyz` (remitente), asunto `Genvís AI邮箱验证邮件`). Un código ajeno registrado una vez en el laboratorio respondió `Verification code is incorrect or has expired`; esa trampa está cerrada aquí.
 
 ## 🎁 Nivel gratuito — cuánto obtienes
 
@@ -57,11 +57,11 @@ node src/cli.js --verify-only     # every key in keys.txt is re-tested with a re
 
 ## 🤖 Modelos — los 34
 
-`GET /v1/models` con una clave en vivo lista **34 ids de modelo**. La línea de clave verificada es `deepseek-v4-flash` — la entrada más barata de la hoja de precios y el modelo con el que cada una de las claves del carril respondió `200` (`content:"ok"`).
+`GET /v1/models` con una clave en vivo lista **34 ids de modelo**. La línea de clave verificada es `deepseek-v4-flash` — la entrada más barata de la hoja de precios y el modelo con el que todas las claves del carril respondieron `200` (`content:"ok"`).
 
 | ID de modelo | Verificado |
 | --- | --- |
-| `deepseek-v4-flash` | **cada clave, chat-200** al acuñar, y de nuevo mediante `--verify-only` |
+| `deepseek-v4-flash` | **todas las claves, chat-200** al acuñar, y de nuevo mediante `--verify-only` |
 | `gemini-3.8-flash` · `gpt-5.6-luna` · `deepseek-v4-pro` · `glm-5.3` · `kimi-k3` · `grok-4.6` · `gpt-6-astra` · `nano-banana*` | listados por `/v1/models` con las mismas claves |
 
 Ratios de precios en la propia hoja del panel (1× = el grupo predeterminado): `gemini-3.8-flash 0.045×`, `gpt-5.6-luna 0.1×`, `gemini-3.7-flash 0.45×`, `deepseek-v4-pro 0.66×`, `gpt-5.6-sol 2×`, `claude-opus-4-8 / claude-sonnet-5 / sora-2 37.5×` — así que una cuenta de $2 compra ~44 chats intensivos en deepseek-v4-flash o un puñado de llamadas de frontera.
@@ -102,7 +102,7 @@ Una clave se escribe en `keys.txt` **solo** después de que `/v1/chat/completion
 
 ### 🖱️ El lanzador
 
-El lanzador pide la lista de proxies (opcional — sin una, la CLI se ejecuta directa) y la cantidad, las recuerda y ejecuta la CLI — acuñar, verificar, cribar salidas, ajustes, ayuda, Conectar a 9Router.
+El lanzador pide la lista de proxies (opcional — sin una, el CLI se ejecuta directo) y la cantidad, las recuerda y ejecuta el CLI — acuñar, verificar, cribar salidas, ajustes, ayuda, Conectar a 9Router.
 
 ## ✅ Verificado funcionando — cada clave se prueba
 
@@ -113,11 +113,11 @@ El lanzador pide la lista de proxies (opcional — sin una, la CLI se ejecuta di
 | `POST /api/user/register` | **200** `{"success":true}` — 14/14 cuentas |
 | `POST /api/user/login` | **200** + JWT `access_token`; `/api/user/self` necesita ese token Bearer (una llamada solo con cookie recibe `401 AUTH_UNAUTHORIZED`) |
 | `POST /api/token/` | **200** — clave de 48 caracteres devuelta una vez (sin prefijo `sk-`), grupo `default` |
-| `POST /v1/chat/completions` (`deepseek-v4-flash`) | **200** con `content:"ok"` en cada clave, tanto desde el arnés de acuñación como desde el `--verify-only` de la CLI incluida |
-| `GET /api/user/self` tras la barrera | `quota 1000000 → 999996`, `used_quota 0 → 4`, `request_count 0 → 1` — el crédito se factura de verdad |
+| `POST /v1/chat/completions` (`deepseek-v4-flash`) | **200** con `content:"ok"` en cada clave, tanto desde el arnés de acuñación como desde el `--verify-only` del CLI incluido |
+| `GET /api/user/self` tras la barrera | `quota 1000000 → 999996`, `used_quota 0 → 4`, `request_count 0 → 1` — el crédito realmente se factura |
 
 > **Barreras de calidad.** Cada clave aquí pasó un `chat-200` en vivo antes de escribirse en `keys.txt`
-> (las claves muertas nunca se entregan). Las combinaciones del router siguen la misma regla a nivel de modelo: una entrada se
+> (las claves muertas nunca se envían). Las combinaciones del router siguen la misma regla a nivel de modelo: una entrada se
 > añade **solo si el modelo responde `chat-200` y puede llamar herramientas** — un modelo sin soporte de herramientas,
 > una clave muerta o un proveedor muerto se descarta en lugar de añadirse. Vuelve a ejecutar el paso de verificación en cualquier momento;
 > los fallos se reportan, nunca se ocultan.
@@ -135,17 +135,17 @@ inbox (one address per account)                                  a fresh address
 
 | Paso | Llamada | Notas |
 | --- | --- | --- |
-| barreras | `GET /api/status` | registro activo, verificación por correo activa, captcha desactivado, crédito de registro de $2 |
+| barreras | `GET /api/status` | registro activado, verificación de correo activada, captcha desactivado, crédito de registro de $2 |
 | buzón | Emailnator `POST /api/generate-email` | un `@gmail.com` nuevo por cuenta, registrado en la forma **sin puntos** (la lista blanca del panel acepta gmail; la bandeja compartida se recicla, así que las direcciones pueden ser ya conocidas) |
 | línea base | `POST /api/message-list` | ids que ya están en la bandeja — nunca se acepta nada más antiguo |
 | enviar código | `GET /api/verification?email=…` | código de 6 hex, ventana de 10 minutos; ~20 s de espera ante limitación |
 | código | sondear `/api/message-list` → `/api/message/<id>` | solo un correo **con marca coincidente** (`Genvís AI` / `genvis.xyz`) puede aportar el código — la bandeja está llena de códigos ajenos |
-| registro | `POST /api/user/register` | `{username,password,email,verification_code}` |
-| inicio de sesión | `POST /api/user/login` | cookie de sesión **y** el `access_token` que el fork quiere como `Authorization: Bearer` |
+| registrar | `POST /api/user/register` | `{username,password,email,verification_code}` |
+| iniciar sesión | `POST /api/user/login` | cookie de sesión **y** el `access_token` que el fork quiere como `Authorization: Bearer` |
 | clave | `POST /api/token/` | clave de 48 caracteres, grupo `default` (alternativa: heredar), revelada una vez |
 | prueba | `POST /v1/chat/completions` | 200 + contenido = conservar; luego otro `/api/user/self` registra la cuota que quemó la llamada |
 
-## ⚙️ Opciones de la CLI
+## ⚙️ Opciones del CLI
 
 ```bash
 node src/cli.js --count 10            # mint 10 keys (one account each, chat gate per key)
@@ -159,16 +159,16 @@ node src/cli.js --help
 
 | Variable de entorno | Predeterminado | Significado |
 | --- | --- | --- |
-| `APITOKEN_PROXIES` | `proxies.txt` | grupo de salidas, una línea por proxy — opcional: sin un grupo, la CLI se conecta directamente |
+| `APITOKEN_PROXIES` | `proxies.txt` | grupo de salidas, una línea por proxy — opcional: sin un grupo, el CLI se conecta directamente |
 | `APITOKEN_MODEL` | `deepseek-v4-flash` | modelo para la verificación en vivo |
 
 ## 🛰️ Detrás de un proxy
 
 **Opcional — recomendado a escala (límites por IP, bloqueos).** La herramienta también funciona sin proxy.
 
-- **Con un grupo:** pasa `--pool <file>` (o define `APITOKEN_PROXIES`) y cada solicitud pasa por una salida de esa lista — una línea muerta hace fallar ese intento y la CLI pasa a la siguiente salida. El carril de correo (Emailnator) pasa por la misma salida.
-- **Sin un grupo:** la CLI imprime `running WITHOUT a proxy (direct)` y se conecta directamente. Nada del registro, la acuñación de claves o la verificación cambia — solo desde dónde salen los paquetes.
-- Ejecuta `--screen` en cualquiera de los dos modos: prueba las salidas que tengas (o la ruta directa) contra Genvís AI antes de una ejecución real.
+- **Con un grupo:** pasa `--pool <file>` (o define `APITOKEN_PROXIES`) y cada solicitud pasa por una salida de esa lista — una línea muerta hace fallar ese intento y el CLI pasa a la siguiente salida. El riel de correo (Emailnator) pasa por la misma salida.
+- **Sin un grupo:** el CLI imprime `running WITHOUT a proxy (direct)` y se conecta directamente. Nada del registro, la acuñación de claves o la verificación cambia — solo desde dónde salen los paquetes.
+- Ejecuta `--screen` contra cualquiera de los dos modos: prueba las salidas que tengas (o la ruta directa) contra Genvís AI antes de una ejecución real.
 
 ## 📄 Archivos
 
@@ -207,11 +207,11 @@ Predeterminados: `--omniroute-prefix apitoken`, `--omniroute-name Genvís AI`, `
 | 🎁 Qué da el proveedor | **$2 (1.000.000 de unidades)** al registrarte — sin captcha, sin check-in |
 | 🔑 Qué te da una clave | una clave de 48 caracteres en su propia cuenta, verificada por chat en `deepseek-v4-flash` |
 | 🌐 Forma de la API | compatible con OpenAI: `POST https://apitoken.fun/v1/chat/completions` (también `/v1/messages`, `:generateContent`, `/v1/images/generations`) |
-| 🔒 Tus datos | solo se contacta con `apitoken.fun` y tu backend de buzón; las claves se quedan en tu máquina |
+| 🔒 Tus datos | solo se contacta a `apitoken.fun` y a tu backend de buzón; las claves se quedan en tu máquina |
 
 ## 🐞 Problemas
 
-Si Genvís AI cambia sus barreras de registro (se publican en `/api/status`), su lista blanca de correo, la forma del código o el host de retransmisión, la herramienta se detiene en ese paso y lo indica — el cuerpo del rechazo se reporta textualmente. **[Abre un issue](../../issues)** con el comando y la salida exacta.
+Si Genvís AI cambia sus barreras de registro (se publican en `/api/status`), su lista blanca de correo, la forma del código o el host del relé, la herramienta se detiene en ese paso y lo dice — el cuerpo del rechazo se reporta textualmente. **[Abre un issue](../../issues)** con el comando y la salida exacta.
 
 ## 📄 Licencia
 
