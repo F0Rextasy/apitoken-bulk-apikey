@@ -77,6 +77,9 @@ const ROOT = path.basename(__dirname) === 'src' ? path.resolve(__dirname, '..') 
 const KEYS_FILE = path.join(ROOT, 'keys.txt');
 const ACCOUNTS_FILE = path.join(ROOT, 'accounts.jsonl');
 const OUT_DIR = path.join(ROOT, 'out');
+const DEAD_FILE = path.join(ROOT, 'keys-dead.txt');
+/** Dead keys from the last verify run (one `key<TAB># reason` per line). */
+const writeDead = (dead) => fs.writeFileSync(DEAD_FILE, dead.map((d) => `${d.key}\t# ${d.why}`).join('\n') + (dead.length ? '\n' : ''));
 
 const BASE = 'https://apitoken.fun';
 const EMAILNATOR = 'https://www.emailnator.com';
@@ -701,16 +704,20 @@ async function verifyOnly(exits) {
   const keys = LIMIT > 0 ? all.slice(0, LIMIT) : all;
   if (!keys.length) { console.log(`no keys in ${KEYS_FILE}`); process.exit(0); }
   let live = 0;
+  const dead = [];
   for (let i = 0; i < keys.length; i++) {
     const exit = exits[i % exits.length];
     try {
       const g = await chatGate(exit, keys[i], MODEL);
       if (g.ok) live++;
+      else dead.push({ key: keys[i], why: `chat ${g.status}` });
       console.log(`  ${g.ok ? '✔' : '✘'} ${String(i + 1).padStart(2, '0')}/${keys.length} ${keys[i].slice(0, 8)}… chat=${g.status}${g.ok ? '' : ` ${g.sample.slice(0, 90)}`}`);
     } catch (e) {
+      dead.push({ key: keys[i], why: String(e.message).slice(0, 90) });
       console.log(`  ✘ ${String(i + 1).padStart(2, '0')}/${keys.length} ${keys[i].slice(0, 8)}… ${String(e.message).slice(0, 90)}`);
     }
   }
+  writeDead(dead);
   console.log(`verify: ${live}/${keys.length} keys live${LIMIT > 0 && all.length > keys.length ? ` (limited; ${all.length} in keys.txt)` : ''}`);
   process.exit(live === keys.length ? 0 : 1);
 }
